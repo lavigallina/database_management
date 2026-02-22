@@ -1,0 +1,186 @@
+SELECT now(); --to show the current date and hour (year-month-day hours-minutes-seconds)
+
+SELECT CURDATE(); --to show only the current date (YYYY-MM-DD)
+
+SELECT CURTIME(); --to show only the current time (hour-minutes-seconds)
+
+SELECT year(booking.bookingdate)
+FROM booking;--lists the different years in which there was a booking (shows that we have tickets from 2015, 2016, ). 
+--It does show duplicates because we didn't put the DISTINCT clause
+
+SELECT DISTINCT year(booking.bookingdate)
+FROM booking; --this lists the UNIQUE years (2015, 2016.. only once). 
+--So, it is the same as the previous statement but it only shows each year once (UNIQUE values)
+
+SELECT YEAR(now()); --this shows what year we are in NOW
+
+SELECT MONTH(now()); --to show the current month
+
+SELECT DAY(now()); --this shows the current day (NUMBER)
+
+SELECT DAYOFMONTH(NOW()) --same as doing DAY(now())
+
+SELECT TIME(now()); --this shows the current time 
+
+SELECT DAYNAME(now()); --to show the current day's name
+
+SELECT MONTHNAME(now()); --to show the current month's name
+
+SELECT DATE_ADD(DATE(now()), INTERVAL 7 DAY); --adds 7 days to today's date (time remains untouched and not shown)
+
+SELECT DATE_ADD(NOW(), INTERVAL 7 DAY); --adds 7 days to today's date. Here the time remains unchanged too, BUT, it is shown on the side 
+
+SELECT DATE_ADD(now(), INTERVAL 1 MONTH); --today but next month (time remains unchanged and is displayed)
+
+SELECT DATE_ADD(DATE(NOW()), INTERVAL 1 MONTH); --shows today but next month (time is not shown)
+
+SELECT DATE_ADD(TIME(NOW()), INTERVAL 3 HOUR); -- adds 2 hours to the current time?? WHY 2 IF I SAID 3? (date is not shown)
+
+SELECT DATE_ADD(NOW(), INTERVAL 3 HOUR); --also adds 2 hours to the current time but also displays the date (why 2 and not 3 hours more?)
+
+SELECT DATE_SUB(NOW(), INTERVAL 1 HOUR); --goes back one hour from current time. It shows both time and date but the latter remains unchanged
+--why does it go back 2 hours instead of 1????
+SELECT DATE_SUB(TIME(NOW()), INTERVAL 1 HOUR); --goes back one hour from current time but it only shows the time, the date isn't displayed
+--why does it go back 2 hours instead of 1????
+
+SELECT DATE_SUB(now(), INTERVAL 15 DAY); --removes 15 days from today's date. It shows both date and time but the latter remains unchanged 
+
+SELECT DATE_SUB(DATE(NOW()), INTERVAL 15 DAY); --removes 15 days from today's date. It only shows date, time is not shown 
+
+SELECT DATE_SUB(now(), INTERVAL 1 MONTH); --removes one month from today's date. Shows both date and time but time remains the same
+
+SELECT DATE_SUB(DATE(NOW()), INTERVAL 1 MONTH); --removes one month from today's date. Only shows date
+
+SELECT DATEDIFF(now(), "2025-02-18"); --this measures the difference IN DAYS between today's date and 18/02/2025
+--(today - 18/02/2025)
+
+SELECT DATEDIFF("2025-02-18", now()); --this makes it negative, difference between 18/02/2025 and today
+
+SELECT booking.bookingid, DATE(booking.bookingdate)
+FROM booking; --shows the id and DATE of the bookings (ONLY DATE, NOT TIME)
+
+SELECT booking.bookingid, DATE(booking.bookingdate),
+    CASE 
+        WHEN  booking.bookingdate >= "2017-01-01" THEN "Recent"
+        ELSE  "Old"
+    END AS Category 
+FROM booking; 
+-- This creates a new column called "Category" in which bookings are categorized depending on their booking date. They can either be labelled as "Recent" or as "Old"
+--This new column is just for analysis purposes, it is not actualy added to the table. 
+--You have to USE as many WHENs as you have different conditions 
+--END AS we use it to assign an alias to the new column (name of the new column). In this case we are creating a new column called category 
+--Assigns a "Recent" if the booking was made after 2017-01-01 or Old if it was made before 
+--when we do CASE we have to put a COMMA after SELECT line --> ALWAYS!!!!!
+
+SELECT booking.bookingid, booking.amount,
+    CASE 
+        WHEN booking.amount < 300 THEN "Low"  
+        WHEN booking.amount BETWEEN 301 AND 800 THEN "Medium"
+        ELSE  "High"
+    END AS category_price
+FROM booking; 
+--In this case we have more than one condition. We are categorising bookings based on their amount. We do so by creating a new column called category_price
+--If the amount is below 300, then the booking is labelled "low". If the amount is between 301 and 800 it is labelled as "medium"
+--Otherwise it is "high"
+--Again, the newly created column is not actually added to the table
+--The new column name needs to only have one clustered name, no space in between the two words. (need to use dash or underscore)
+
+SELECT UPPER(booking.firstname)
+FROM booking; --This shows the list of the names of the people, all converted to uppercase 
+
+SELECT UPPER(booking.firstname) AS upper_name
+FROM booking; --This does the same as the line above but creates a new figurative column called upper_name under which the names are shown
+
+SELECT LOWER(booking.firstname)
+FROM booking; --Converts all names to lowercase and displays them
+
+SELECT LOWER(booking.firstname) AS lower_name
+FROM booking; --this does the same as the line above but creates a new figurative column called lower_name under which the names are shown 
+
+SELECT booking.email, SUBSTRING(booking.email, 1, 5) AS sub_email
+FROM booking; --this creates a new column called sub_email, that shows a substring of each email. 
+--It takes each email and shows 5 characters starting from the 1st one 
+--1 is the first character and 5 is the number of characters 
+
+SELECT CONCAT(booking.firstname, " ", booking.lastname) AS full_name
+FROM booking; -- " " stands for the blank space to separate first and last name. 
+--We are concatenating two columns and creating a new one with the ALIAS full_name and shows the concatenated columns
+--shows firstname, SPACE, last name 
+
+SELECT booking.postalcode, RIGHT(booking.postalcode, 4) AS last_4
+FROM booking; --This creates a new column called last_4 that shows the last 4 digits of each postal code
+--last 4 digits because we used RIGHT
+
+SELECT booking.postalcode, LEFT(booking.postalcode, 4) AS first_4
+FROM booking; --This shows the first 4 digits of each postal code in a new column called first_4
+--first 4 digits because we used LEFT 
+
+SELECT booking.email, SUBSTRING_INDEX(booking.email, "@", 1) AS username
+FROM booking; --this creates a new column called username that shows the first part of the email until right before the reference character (@)
+--if you put a negative number it is from @ till the end. 
+--BUT in this case we have a positive number, therefore it will extract from the beginning till right before @
+--we put 1 which means that there we want to take until right before the FIRST occurence of the reference character 
+
+SELECT booking.email, SUBSTRING_INDEX(booking.email, "@", -1) AS username
+FROM booking; --this does the same as above but from right after the first occurence of the reference character till the end
+--So, since we have used a minus, it will go from the ref till the end and store the results in the new column ALIAS username 
+
+SELECT booking.email, SUBSTRING_INDEX(booking.email, "@", 2) AS username
+FROM booking; --IMAGINE WE HAVE two @s IN THE EMAIL, in this case by using a POSITIVE 2 it will show from the beginning till right before the second occurence of the ref character 
+--this shows all characters until the second @ (unitl RIGHT BEFORE the second one). In a new column with ALIAS username 
+--in this case that we don't have a second @, it will show the whole email because it never encounters the second occurence
+
+--so, the number doesn't specify how many of the ref character we have, we can have one but still write 2 and it will show the whole email 
+
+--negative --> AFTER, positive --> BEFORE 
+
+--number = which occurence to take into account 
+
+SELECT booking.email, SUBSTRING_INDEX(booking.email, "@", -2) AS username
+FROM booking; --This would start from right after the second @ TILL THE END 
+
+SELECT AVG(booking.amount) AS average
+FROM booking
+WHERE YEAR(booking.bookingdate) = 2017; --an aggregate function returns one single number. 
+--in this case it is calculating the average amount and storing it under the ALIAS "average" of those bookings made in 2017 
+
+SELECT ROUND(AVG(booking.amount), 2) AS average
+FROM booking
+WHERE YEAR(booking.bookingdate) = 2017; --If you want to see less decimals you can apply the function ROUND and specify how many to round
+
+SELECT COUNT(booking.amount) AS total
+FROM booking
+WHERE YEAR(booking.bookingdate) = 2017; --this counts how many tickets were sold in 2017
+--In other words, it counts the number of rows (instances) of booking.amount that meet the WHERE condition. If we had a null value in amount, it wouldn't be counted
+--this only counts the rows where there are NON NULL VALUES
+--the difference between * and the name of the column => if you have a null value in the booking.amount column, it will not be counted and it will output 328
+--with count always put * to AVOID MISTAKES (e.g. null value in amount but the ticket was actually sold and so there's inconsistencies)
+--count(*) = count(booking.amount) ONLY IF in booking.amount we don't have any null values 
+
+SELECT COUNT(*) AS total
+FROM booking
+WHERE YEAR(booking.bookingdate) = 2017; --using * includes all values: NULL and NON-NULL 
+--it counts number of rows that meet the WHERE condition (in general, not a specific column)
+
+SELECT MAX(booking.amount) AS maximum, MIN(booking.amount) AS minimum
+FROM booking 
+WHERE YEAR(booking.bookingdate) = 2017; --this returns the maximum amount under the "maximum" ALIAS and the minimum amount under the "minimum" ALIAS
+--however, it only takes into account those amounts of bookings made in the year 2017 
+
+SELECT booking.country, SUM(booking.amount) AS total
+FROM booking; --here we are trying to do the sum of the amouts and display it along with booking.country (6 distinct countries)
+--however, aggregate functions return a single value, therefore, it will not output the sum of amounts PER country, but the sum of amounts in total
+--and we would be trying to assign it to booking.countries which are 6 unique ones, whereas SUM(amount) is only one value 
+--this doesn't work because we cannot assign the total amount of all tickets to a different country, because SUM(amount) is a single value
+--whereas booking.country has many different values 
+
+SELECT COUNT(DISTINCT(booking.country)) AS num_countries
+FROM booking
+WHERE YEAR(bookingdate) = 2017; --from how many countries were bookings done in 2017?
+--here we are counting the UNIQUE number of countries that appear in bookings made during the year 2017 (under the num_countries ALIAS)
+--we use distinct because we want to count among the unique possible countries, not the repeated ones. 
+--There are 6 counties in total and the fact that this returns 6 means that in 2017 there has been at least one booking per country
+
+SELECT COUNT(DISTINCT(booking.country)) AS num_countries
+FROM booking
+WHERE YEAR(bookingdate) IN (2016, 2017); --same as above but we give the possibility of two years 
